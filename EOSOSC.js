@@ -211,7 +211,7 @@ function pointCallback(startID, endID, position, size, fade, color) {
 function oscEvent(address, args) {
 	// Register pattern with Wildcards for cuelist and cue number
 	local.register("/eos/out/*/cue/*/*", "cueCallback");
-	local.register("/eos/out/*/cue", "cueCallback");
+	local.register("/eos/out/pending/cue", "cueCallback");
 
 	// Register pattern with Wildcards for cueText
 	local.register("/eos/out/*/cue/text", "cueTextCallback");
@@ -225,7 +225,7 @@ function oscEvent(address, args) {
  */
 function cueCallback(address, args) {
 	// Check if address pattern matches cue numbers
-	if (local.match(address, "/eos/out/*/cue/*/*") || local.match(address, "/eos/out/*/cue")) {
+	if (local.match(address, "/eos/out/*/cue/*/*") || local.match(address, "/eos/out/pending/cue")) {
 		// Split in parts
 		var addressParts = address.split("/");
 

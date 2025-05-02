@@ -8,21 +8,37 @@
 	"url": "https://github.com/benkuper/EOS-OSC-Chataigne-Module",
 	"downloadURL": "https://github.com/benkuper/EOS-OSC-Chataigne-Module/archive/master.zip",
 
+	"scripts": [
+		"EOSOSC.js"
+	],
+
+
 	"hasInput": true,
 	"hasOutput": true,
 
 	"hideDefaultCommands": false,
 
+	"hideDefaultParameters": [
+		"autoAdd",
+		"splitArguments",
+		"autoRange",
+		"autoFeedback",
+		"colorSendMode",
+		"booleanSendMode",
+		"clearValues",
+		"useHierarchy"
+	],
+
 	"defaults": {
-		"baudRate": 115200,
 		"autoAdd": false,
 		"OSC Input": {
-			"localPort": 9001
+			"localPort": 8001
 		},
 		"OSC Output": {
-			"remotePort": 9000
+			"remotePort": 8000
 		}
 	},
+
 
 	"parameters": {
 		"Start Channel": {
@@ -49,21 +65,6 @@
 			}
 		}
 	},
-
-
-	"hideDefaultParameters": [
-		"autoAdd",
-		"splitArguments",
-		"autoRange",
-		"autoFeedback",
-		"colorSendMode",
-		"booleanSendMode"
-	],
-
-
-	"scripts": [
-		"EOSOSC.js"
-	],
 
 	"values": {
 		"ActiveCueNo":{
