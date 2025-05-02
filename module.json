@@ -27,6 +27,26 @@
 	"parameters": {
 		"Start Channel": {
 			"type": "Integer"
+		},
+
+		"User": {
+			"type": "Enum",
+			"options": {
+				"Console": "console",
+				"Background": "background",
+				"User ID": "id"
+			},
+			"default": "console"
+		},
+		"User ID": {
+			"type": "Integer",
+			"min": 1,
+			"dependency": {
+				"source": "User",
+				"value": "id",
+				"check": "equals",
+				"action": "show"
+			}
 		}
 	},
 
@@ -35,7 +55,9 @@
 		"autoAdd",
 		"splitArguments",
 		"autoRange",
-		"autoFeedback"
+		"autoFeedback",
+		"colorSendMode",
+		"booleanSendMode"
 	],
 
 

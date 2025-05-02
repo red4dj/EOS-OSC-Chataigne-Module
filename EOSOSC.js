@@ -1,10 +1,54 @@
 /**
- * Sends and terminates a command to Eos.
+ * Initializes EOS OSC module
+ */
+function init() {
+	updateUser();
+	local.send("/eos/subscribe", 1);
+}
+
+/**
+ * Handles updated parameters and sends user update if applicable
  *
- * @param {string} command The command to send.
+ * @param {Object} param The parameter that was changed
+ */
+function moduleParameterChanged(param) {
+	script.log(param.name + " parameter changed, new value: " + param.get());
+
+	if (param.name == "user" ||
+		param.name == "userID" ||
+		param.name == "localPort" ||
+		param.name == "local" ||
+		param.name == "remoteHost" ||
+		param.name == "remotePort") {
+		updateUser();
+	}
+}
+
+// Sending & Command Formulation
+/**
+ * Sends and terminates a command to Eos
+ *
+ * @param {string} command The command to send
  */
 function sendCommand(command) {
 	local.send("/eos/cmd", command+"#");
+}
+
+/**
+ * Sends user selection to Eos
+ */
+function updateUser() {
+	var userID = local.parameters.userID.get();
+
+	if (local.parameters.user.get() == "console") {
+		userID = -1;
+	} else if (local.parameters.user.get() == "background") {
+		userID = 0;
+	}
+
+	local.send("/eos/user", userID);
+
+	script.log("Change Eos user: " + userID);
 }
 
 /**
@@ -42,6 +86,7 @@ function getColorMessage(color) {
 	return "Red "+r+" Green "+g+" Blue "+b;
 }
 
+// Commands
 /**
  * Send command to set target to value
  *
@@ -90,7 +135,7 @@ function blackOutCallback(target, id, startID, endID) {
 	sendCommand(cmd);
 }
 
-// Advanced functions
+// Advanced Commands
 /**
  * Send command to set target range to color gradient
  *
