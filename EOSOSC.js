@@ -179,13 +179,9 @@ function gradientCallback(startID, endID, color1, color2) {
  * @param position {number} Where the point should be centered (0.0-1.0)
  * @param size {number} The size of the point in either direction (0.0-1.0)
  * @param fade {number} Amount to fade target to target (0.0-1.0)
- * @param color {[red: number, green: number, blue: number]} Color array (values 0.0-1.0)
+ * @param value {number} Value 0.0-1.0
  */
-function pointCallback(startID, endID, position, size, fade, color) {
-	var r = color[0];
-	var g = color[1];
-	var b = color[2];
-
+function pointCallback(startID, endID, position, size, fade, value) {
 	for (var i = startID; i <= endID; i++) {
 		var p = parseFloat(i-startID) / (endID-startID); //Percent of all targets
 
@@ -194,9 +190,9 @@ function pointCallback(startID, endID, position, size, fade, color) {
 			fac = 1 - Math.abs(fac / size);
 			fac = Math.min(Math.max(fac,0),1);
 
-			colorCallback("one", i, undefined, undefined, [r*fac, g*fac, b*fac]);
+			valueCallback("one", i, undefined, undefined, value * fac)
 		} else {
-			colorCallback("one", i, undefined, undefined, [0, 0, 0]);
+			valueCallback("one", i, undefined, undefined, 0)
 		}
 	}
 }
