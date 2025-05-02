@@ -209,7 +209,7 @@ function cueCallback(address, args) {
 		}
 
 		// DEBUG
-		script.log(cueType.charAt(0).toUpperCase() + cueType.substring(1) + " cue: List " + cuelist + ", Cue " + cueNumber);
+		script.log(cueType + " cue: List " + cuelist + ", Cue " + cueNumber);
 	}
 }
 
@@ -225,12 +225,60 @@ function cueTextCallback(address, args) {
 		// Split in parts
 		var addressParts = address.split("/");
 
-		// The type is part 4 (index 3) for output "/eos/out/<active-pending>/cue/<list>/<cue>"
+		// The type is part 4 (index 3) for output "/eos/out/<active-pending>/cue/text"
 		var cueType = addressParts[3];
 
-		// Output the received values
-		if (cueType == "active") local.values.activeCueName.set(args[0]);
-		if (cueType == "pending") local.values.pendingCueName.set(args[0]);
+		// Parse cue parameters
+		var cueText = args[0].split(" ");
+
+		var cueLabel = "";
+		var cueTime = 0;
+		var cuePercent = 0;
+
+		if (cueType == "active") {
+			if (cueText.length > 0) {
+				// The cue time is the 2nd-to-last part (index length-2) for output "1/2.3 Label With Spaces 0:05 75%"
+				cueTime = eosTimeToSeconds(cueText[cueText.length - 2]);
+
+				// The cue percent is the last part (index length-1) for output "1/2.3 Label With Spaces 0:05 75%"
+				cuePercent = parseInt(cueText[cueText.length - 1]);
+
+				// The cue label is from part 2 (index 1) to the 3rd-to-last part (index length-3) for output "1/2.3 Label With Spaces 0:05 75%"
+				cueText.splice(0, 1);
+				cueText.splice(cueText.length - 2, 2);
+				cueLabel = cueText.join(" ");
+			}
+
+			script.log("Parse active cue - Label: " + cueLabel + ", Time: " + cueTime + ", Percent: " + cuePercent);
+
+			// Output the active cue text
+			local.values.activeCueName.set(args[0]);
+
+			// Output the active cue parameters
+			local.values.activeCueLabel.set(cueLabel);
+			local.values.activeCueTime.set(cueTime);
+			local.values.activeCuePercent.set(cuePercent);
+
+		} else if (cueType == "pending") {
+			if (cueText.length > 0) {
+				// The cue time is the last part (index length-1) for output "1/2.3 Label With Spaces 0:05"
+				cueTime = eosTimeToSeconds(cueText[cueText.length - 1]);
+
+				// The cue label is from part 2 (index 1) to the 2nd-to-last part (index length-2) for output "1/2.3 Label With Spaces 0:05 75%"
+				cueText.splice(0, 1);
+				cueText.splice(cueText.length - 1, 1);
+				cueLabel = cueText.join(" ");
+			}
+
+			script.log("Parse pending cue - Label: " + cueLabel + ", Time: " + cueTime);
+
+			// Output the pending cue text
+			local.values.pendingCueName.set(args[0]);
+
+			// Output the pending cue parameters
+			local.values.pendingCueLabel.set(cueLabel);
+			local.values.pendingCueTime.set(cueTime);
+		}
 	}
 }
 
@@ -247,4 +295,32 @@ function normalizeEosSingleDigit(value) {
 		return "0" + value;
 	}
 	return value;
+}
+
+/**
+ * Convert Eos time string to float seconds
+ *
+ * @param time {string} The string time to convert
+ *
+ * @returns {number} The time in seconds
+ */
+function eosTimeToSeconds(time) {
+	var timeParts = time.split(':');
+
+	// Seconds
+	var seconds = parseFloat(time);
+
+	// Minutes:Seconds
+	if (timeParts.length == 2) {
+		seconds = parseInt(timeParts[0]) * 60;
+		seconds = seconds + parseFloat(timeParts[1]);
+
+	// Hours:Minutes:Seconds
+	} else if (timeParts.length == 3) {
+		seconds = parseInt(timeParts[0]) * 60 * 60;
+		seconds = seconds + parseInt(timeParts[1]) * 60;
+		seconds = seconds + parseFloat(timeParts[2]);
+	}
+
+	return seconds;
 }

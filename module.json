@@ -74,10 +74,42 @@
 			"description": "Active cue text"
 		},
 
+		"ActiveCueLabel":{
+			"type": "String",
+			"readOnly": true,
+			"description": "Active cue label"
+		},
+
+		"ActiveCueTime":{
+			"type": "Float",
+			"readOnly": true,
+			"ui": "time",
+			"description": "Active cue time"
+		},
+
+		"ActiveCuePercent":{
+			"type": "Integer",
+			"readOnly": true,
+			"description": "Active cue percent complete"
+		},
+
 		"PendingCueName":{
 			"type": "String",
 			"readOnly": true,
 			"description": "Pending cue text"
+		},
+
+		"PendingCueLabel":{
+			"type": "String",
+			"readOnly": true,
+			"description": "Pending cue label"
+		},
+
+		"PendingCueTime":{
+			"type": "Float",
+			"readOnly": true,
+			"ui": "time",
+			"description": "Pending cue time"
 		}
 	},
 
