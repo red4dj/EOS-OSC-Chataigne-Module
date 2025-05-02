@@ -11,34 +11,35 @@ function sendCommand(command) {
  * Create an Eos message to specify the input target
  *
  * @param target {string} Target type: "one" "all" "range"
- * @param id {int} Target "one" id
- * @param startID {int} Target "range" start id
- * @param endID {int} Target "range" end id
+ * @param [id] {int} Target "one" id
+ * @param [startID] {int} Target "range" start id
+ * @param [endID] {int} Target "range" end id
+ *
  * @returns {string} Eos channel selection command
  */
 function getCommandTarget(target, id, startID, endID) {
 	var globalStart = local.parameters.startChannel.get();
 	if (target == "one") return "Chan "+(globalStart+id);
 	if (target == "range") return "Chan "+(globalStart+startID)+" Thru "+(globalStart+endID);
-	if (target == "all") return "Group "+globalStart;
+	if (target == "all") return "Select_All";
 }
 
 /**
  * Create an Eos message to set channel color from color input
  *
  * @param color {[red: number, green: number, blue: number]} Color array (values 0.0-1.0)
- * @param showRest {boolean} Set non-rgb values to 0
+ *
  * @returns {string} Eos color command
  */
-function getColorMessage(color, showRest) {
-	var r = parseInt(color[0] * 100);
-	var g = parseInt(color[1] * 100);
-	var b = parseInt(color[2] * 100);
-	if (r < 10) r = "0"+r;
-	if (g < 10) g = "0"+g;
-	if (b < 10) b = "0"+b;
+function getColorMessage(color) {
+	var r = Math.round(color[0] * 100);
+	var g = Math.round(color[1] * 100);
+	var b = Math.round(color[2] * 100);
+	r = normalizeEosSingleDigit(r);
+	g = normalizeEosSingleDigit(g);
+	b = normalizeEosSingleDigit(b);
 
-	return "Red @ "+r+" Green @ "+g+" Blue @ "+b+(showRest?" Cyan @ 0 Amber @ 0 Indigo @ 0 White @ 0":"");
+	return "Red "+r+" Green "+g+" Blue "+b;
 }
 
 /**
@@ -51,8 +52,8 @@ function getColorMessage(color, showRest) {
  * @param value {number} Value 0.0-1.0
  */
 function valueCallback(target, id, startID, endID, value) {
-	var v = parseInt(value*100);
-	if (v < 10) v = "0"+v;
+	var v = Math.round(value * 100);
+	v = normalizeEosSingleDigit(v);
 
 	var cmd = getCommandTarget(target, id, startID, endID)+" @ "+v;
 	sendCommand(cmd);
@@ -83,10 +84,9 @@ function colorCallback(target, id, startID, endID, color) {
  */
 function blackOutCallback(target, id, startID, endID) {
 	var cmd = getCommandTarget(target, id, startID, endID);
-	var colCmd  = getColorMessage(color, true);
-	sendCommand(cmd+" "+colCmd);
+	sendCommand(cmd+" Color 0");
 
-	cmd = getCommandTarget(target, id, startID, endID)+" @ 0";
+	cmd = getCommandTarget(target, id, startID, endID)+" @ Out";
 	sendCommand(cmd);
 }
 
@@ -116,16 +116,13 @@ function gradientCallback(startID, endID, color1, color2) {
 	var maxID = Math.max(startID, endID);
 
 	for (var i = minID; i <= maxID; i++) {
-		var p = (i-minID) * 1.0 / (maxID-minID); //Percent of all targets
+		var p = parseFloat(i-minID) / (maxID-minID); //Percent of all targets
 
 		var r = (r1+(r2-r1)*p);
 		var g = (g1+(g2-g1)*p);
 		var b = (b1+(b2-b1)*p);
 
-		var cmd = getCommandTarget("one",i);
-		var colorCmd = getColorMessage([r,g,b]);
-
-		sendCommand(cmd+" "+colorCmd);
+		colorCallback("one", i, undefined, undefined, [r,g,b]);
 	}
 }
 
@@ -145,22 +142,17 @@ function pointCallback(startID, endID, position, size, fade, color) {
 	var b = color[2];
 
 	for (var i = startID; i <= endID; i++) {
-		var p = (i-startID) * 1.0 / (endID-startID); //Percent of all targets
-
-		var cmd = getCommandTarget("one", i);
-		var colorCmd;
+		var p = parseFloat(i-startID) / (endID-startID); //Percent of all targets
 
 		if (Math.abs(position-p) < size) { //If distance from center position is less than size
 			var fac = (position-p) * fade * 3;
 			fac = 1 - Math.abs(fac / size);
 			fac = Math.min(Math.max(fac,0),1);
 
-			colorCmd = getColorMessage([r*fac, g*fac, b*fac]);
+			colorCallback("one", i, undefined, undefined, [r*fac, g*fac, b*fac]);
 		} else {
-			colorCmd = getColorMessage([0,0,0]);
+			colorCallback("one", i, undefined, undefined, [0, 0, 0]);
 		}
-
-		sendCommand(cmd+" "+colorCmd);
 	}
 }
 
@@ -173,7 +165,8 @@ function pointCallback(startID, endID, position, size, fade, color) {
  */
 function oscEvent(address, args) {
 	// Register pattern with Wildcards for cuelist and cue number
-    local.register("/eos/out/*/cue/*/*", "cueCallback");
+	local.register("/eos/out/*/cue/*/*", "cueCallback");
+	local.register("/eos/out/*/cue", "cueCallback");
 
 	// Register pattern with Wildcards for cueText
 	local.register("/eos/out/*/cue/text", "cueTextCallback");
@@ -186,19 +179,25 @@ function oscEvent(address, args) {
  * @param args {string} OSC arguments
  */
 function cueCallback(address, args) {
-    // Check if adresspattern matches
-    if (local.match(address, "/eos/out/*/cue/*/*")) {
-        // Split in parts
-        var addressParts = address.split("/");
+	// Check if address pattern matches cue numbers
+	if (local.match(address, "/eos/out/*/cue/*/*") || local.match(address, "/eos/out/*/cue")) {
+		// Split in parts
+		var addressParts = address.split("/");
 
 		// The type is part 4 (index 3) for output "/eos/out/<active-pending>/cue/<list>/<cue>"
 		var cueType = addressParts[3];
 
-		// The cuelist is part 6 (index 5) for output "/eos/out/<active-pending>/cue/<list>/<cue>"
-        var cuelist = addressParts[5];
+		var cuelist = 0;
+		var cueNumber = 0.0;
 
-		// The cue number is part 7 (index 6) for output "/eos/out/<active-pending>/cue/<list>/<cue>"
-        var cueNumber = addressParts[6];
+		// Check if address pattern matches cue numbers
+		if (local.match(address, "/eos/out/*/cue/*/*")) {
+			// The cuelist is part 6 (index 5) for output "/eos/out/<active-pending>/cue/<list>/<cue>"
+			cuelist = parseInt(addressParts[5]);
+
+			// The cue number is part 7 (index 6) for output "/eos/out/<active-pending>/cue/<list>/<cue>"
+			cueNumber = parseFloat(addressParts[6]);
+		}
 
 		// Output the received values
 		if (cueType == "active") {
@@ -209,8 +208,9 @@ function cueCallback(address, args) {
 			local.values.pendingCuelistNo.set(cuelist);
 		}
 
-		//DEBUG script.log("Pending cue: List " + cuelist + ", Cue " + cueNumber);
-    }
+		// DEBUG
+		script.log(cueType.charAt(0).toUpperCase() + cueType.substring(1) + " cue: List " + cuelist + ", Cue " + cueNumber);
+	}
 }
 
 /**
@@ -220,16 +220,31 @@ function cueCallback(address, args) {
  * @param args {string} OSC arguments
  */
 function cueTextCallback(address, args) {
-    // Check if address pattern matches
-    if (local.match(address, "/eos/out/*/cue/text")) {
-        // Split in parts
-        var addressParts = address.split("/");
+	// Check if address pattern matches
+	if (local.match(address, "/eos/out/*/cue/text")) {
+		// Split in parts
+		var addressParts = address.split("/");
 
 		// The type is part 4 (index 3) for output "/eos/out/<active-pending>/cue/<list>/<cue>"
 		var cueType = addressParts[3];
 
-        // Output the received values
-        if (cueType == "active") local.values.activeCueName.set(args[0]);
+		// Output the received values
+		if (cueType == "active") local.values.activeCueName.set(args[0]);
 		if (cueType == "pending") local.values.pendingCueName.set(args[0]);
-    }
+	}
+}
+
+// Utilities
+/**
+ * Add leading 0 to single digit numbers
+ *
+ * @param value {number} The number to normalize
+ *
+ * @returns {string} The normalized number
+ */
+function normalizeEosSingleDigit(value) {
+	if (value > 0 && value < 10) {
+		return "0" + value;
+	}
+	return value;
 }
