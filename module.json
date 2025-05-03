@@ -3,7 +3,7 @@
 	"type": "OSC",
 	"path": "Software",
 
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Mike's special module to control EOS Light Console through OSC via commands",
 	"url": "https://github.com/benkuper/EOS-OSC-Chataigne-Module",
 	"downloadURL": "https://github.com/benkuper/EOS-OSC-Chataigne-Module/archive/master.zip",
@@ -45,35 +45,41 @@
 
 	"values": {
 		"ActiveCueNo":{
-			"type": "String",
+			"type": "Float",
+			"readOnly": true,
 			"description": "Active cue number"
-        },
+		},
 
 		"ActiveCuelistNo":{
-			"type": "String",
-            "description": "Active cuelist number"
+			"type": "Integer",
+			"readOnly": true,
+			"description": "Active cuelist number"
 		},
 
 		"PendingCueNo":{
-			"type": "String",
-            "description": "Pending cue number"
-        },
+			"type": "Float",
+			"readOnly": true,
+			"description": "Pending cue number"
+		},
 
 		"PendingCuelistNo":{
-			"type": "String",
-            "description": "Pending cuelist number"
-        },
+			"type": "Integer",
+			"readOnly": true,
+			"description": "Pending cuelist number"
+		},
 
 		"ActiveCueName":{
 			"type": "String",
-            "description": "Active cue text"
-        },
+			"readOnly": true,
+			"description": "Active cue text"
+		},
 
 		"PendingCueName":{
 			"type": "String",
-            "description": "Pending cue text"
-        }
-    },
+			"readOnly": true,
+			"description": "Pending cue text"
+		}
+	},
 
 	"commands": {
 		"Set Value": {
@@ -91,6 +97,7 @@
 
 				"ID": {
 					"type": "Integer",
+					"default": 1,
 					"dependency": {
 						"source": "target",
 						"value": "one",
@@ -101,6 +108,7 @@
 
 				"Start ID": {
 					"type": "Integer",
+					"default": 1,
 					"dependency": {
 						"source": "target",
 						"value": "range",
@@ -144,6 +152,7 @@
 
 				"ID": {
 					"type": "Integer",
+					"default": 1,
 					"dependency": {
 						"source": "target",
 						"value": "one",
@@ -154,6 +163,7 @@
 
 				"Start ID": {
 					"type": "Integer",
+					"default": 1,
 					"dependency": {
 						"source": "target",
 						"value": "range",
@@ -195,6 +205,7 @@
 
 				"ID": {
 					"type": "Integer",
+					"default": 1,
 					"dependency": {
 						"source": "target",
 						"value": "one",
@@ -205,6 +216,7 @@
 
 				"Start ID": {
 					"type": "Integer",
+					"default": 1,
 					"dependency": {
 						"source": "target",
 						"value": "range",
@@ -232,15 +244,14 @@
 			"parameters": {
 				"Start ID": {
 					"type": "Integer",
-					"min": 0,
-					"max": 15
+					"default": 1,
+					"min": 0
 				},
 
 				"End ID": {
 					"type": "Integer",
 					"default": 1,
-					"min": 0,
-					"max": 15
+					"min": 0
 				},
 
 				"Start Color": {
@@ -261,15 +272,14 @@
 			"parameters": {
 				"Start ID": {
 					"type": "Integer",
-					"min": 0,
-					"max": 15
+					"default": 1,
+					"min": 0
 				},
 
 				"End ID": {
 					"type": "Integer",
 					"default": 1,
-					"min": 0,
-					"max": 15
+					"min": 0
 				},
 
 				"Position": {
