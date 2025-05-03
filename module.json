@@ -1,43 +1,37 @@
 {
-	"name":"EOS OSC",
-	"type":"OSC",
-	"path":"Software",
-	
-	"version":"1.0.1",
-	"description":"Mike's special module to control EOS Light Console through OSC via commands",
-	"url":"https://github.com/benkuper/EOS-OSC-Chataigne-Module",
-	"downloadURL":"https://github.com/benkuper/EOS-OSC-Chataigne-Module/archive/master.zip",
+	"name": "EOS OSC",
+	"type": "OSC",
+	"path": "Software",
 
-	"hasInput":true,
-	"hasOutput":true, 
+	"version": "1.0.2",
+	"description": "Mike's special module to control EOS Light Console through OSC via commands",
+	"url": "https://github.com/benkuper/EOS-OSC-Chataigne-Module",
+	"downloadURL": "https://github.com/benkuper/EOS-OSC-Chataigne-Module/archive/master.zip",
 
-	"hideDefaultCommands":false,
-	
-	"defaults":
-	{		
-		"baudRate":115200,
-		"autoAdd":false,
-		"OSC Input":
-		{
-			"localPort":9001
+	"hasInput": true,
+	"hasOutput": true,
+
+	"hideDefaultCommands": false,
+
+	"defaults": {
+		"baudRate": 115200,
+		"autoAdd": false,
+		"OSC Input": {
+			"localPort": 9001
 		},
-		"OSC Output":
-		{
-			"remotePort":9000
+		"OSC Output": {
+			"remotePort": 9000
 		}
 	},
 
-	"parameters":
-	{
-		"Start Channel":
-		{
-			"type":"Integer"
+	"parameters": {
+		"Start Channel": {
+			"type": "Integer"
 		}
 	},
 
 
-	"hideDefaultParameters":
-	[
+	"hideDefaultParameters": [
 		"autoAdd",
 		"splitArguments",
 		"autoRange",
@@ -45,304 +39,263 @@
 	],
 
 
-	"scripts":
-	[
+	"scripts": [
 		"EOSOSC.js"
 	],
 
 	"values": {
 		"ActiveCueNo":{
-			"type":"String",
-			},
+			"type": "String",
+			"description": "Active cue number"
+        },
+
 		"ActiveCuelistNo":{
-			"type":"String",
-			},
+			"type": "String",
+            "description": "Active cuelist number"
+		},
+
 		"PendingCueNo":{
-			"type":"String",
-			},
+			"type": "String",
+            "description": "Pending cue number"
+        },
+
 		"PendingCuelistNo":{
-			"type":"String",
-			},
+			"type": "String",
+            "description": "Pending cuelist number"
+        },
+
 		"ActiveCueName":{
-			"type":"String",
-			},
+			"type": "String",
+            "description": "Active cue text"
+        },
+
 		"PendingCueName":{
-			"type":"String",
-			}
+			"type": "String",
+            "description": "Pending cue text"
+        }
     },
 
-	"commands":
-	{
-		
-		"Set Value":
-		{
-			"menu":"",
-			"callback":"valueCallback",
-			"parameters":
-			{
-				"Target":
-				{
-					"type":"Enum",
-					"options":
-					{
-						"All":"all",
-						"One":"one",
-						"Range":"range"
+	"commands": {
+		"Set Value": {
+			"menu": "",
+			"callback": "valueCallback",
+			"parameters": {
+				"Target": {
+					"type": "Enum",
+					"options": {
+						"All": "all",
+						"One": "one",
+						"Range": "range"
 					}
 				},
 
-				"ID":
-				{
-					"type":"Integer",
-					"dependency": 
-					{
-						"source":"target",
-						"value":"one",
-						"check":"equals",
-						"action":"show"
+				"ID": {
+					"type": "Integer",
+					"dependency": {
+						"source": "target",
+						"value": "one",
+						"check": "equals",
+						"action": "show"
 					}
 				},
 
-				"Start ID":
-				{
-					"type":"Integer",
-					"dependency": 
-					{
-						"source":"target",
-						"value":"range",
-						"check":"equals",
-						"action":"show"
-					}
-				},
-				
-				"End ID":
-				{
-					"type":"Integer",
-					"default":1,
-					"dependency": 
-					{
-						"source":"target",
-						"value":"range",
-						"check":"equals",
-						"action":"show"
+				"Start ID": {
+					"type": "Integer",
+					"dependency": {
+						"source": "target",
+						"value": "range",
+						"check": "equals",
+						"action": "show"
 					}
 				},
 
-				"Value":
-				{
-					"type":"Float",
-					"min":0,
-					"max":1,
-					"default":0
+				"End ID": {
+					"type": "Integer",
+					"default": 1,
+					"dependency": {
+						"source": "target",
+						"value": "range",
+						"check": "equals",
+						"action": "show"
+					}
+				},
+
+				"Value": {
+					"type": "Float",
+					"min": 0,
+					"max": 1,
+					"default": 0
 				}
-				
 			}
 		},
 
-		"Set Color":
-		{
-			"menu":"",
-			"callback":"colorCallback",
-			"parameters":
-			{
-				"Target":
-				{
-					"type":"Enum",
-					"options":
-					{
-						"All":"all",
-						"One":"one",
-						"Range":"range"
+		"Set Color": {
+			"menu": "",
+			"callback": "colorCallback",
+			"parameters": {
+				"Target": {
+					"type": "Enum",
+					"options": {
+						"All": "all",
+						"One": "one",
+						"Range": "range"
 					}
 				},
 
-				"ID":
-				{
-					"type":"Integer",
-					"dependency": 
-					{
-						"source":"target",
-						"value":"one",
-						"check":"equals",
-						"action":"show"
+				"ID": {
+					"type": "Integer",
+					"dependency": {
+						"source": "target",
+						"value": "one",
+						"check": "equals",
+						"action": "show"
 					}
 				},
 
-				"Start ID":
-				{
-					"type":"Integer",
-					"dependency": 
-					{
-						"source":"target",
-						"value":"range",
-						"check":"equals",
-						"action":"show"
-					}
-				},
-				
-				"End ID":
-				{
-					"type":"Integer",
-					"default":1,
-					"dependency": 
-					{
-						"source":"target",
-						"value":"range",
-						"check":"equals",
-						"action":"show"
+				"Start ID": {
+					"type": "Integer",
+					"dependency": {
+						"source": "target",
+						"value": "range",
+						"check": "equals",
+						"action": "show"
 					}
 				},
 
-				"Color":
-				{
-					"type":"Color",
-					"default":[1,0,0,1]
+				"End ID": {
+					"type": "Integer",
+					"default": 1,
+					"dependency": {
+						"source": "target",
+						"value": "range",
+						"check": "equals",
+						"action": "show"
+					}
+				},
+
+				"Color": {
+					"type": "Color",
+					"default": [1,0,0,1]
 				}
-				
 			}
 		},
 
-		"Black Out":
-		{
-			"menu":"",
-			"callback":"blackOutCallback",
-			"parameters":
-			{
-				"Target":
-				{
-					"type":"Enum",
-					"options":
-					{
-						"All":"all",
-						"One":"one",
-						"Range":"range"
+		"Black Out": {
+			"menu": "",
+			"callback": "blackOutCallback",
+			"parameters": {
+				"Target": {
+					"type": "Enum",
+					"options": {
+						"All": "all",
+						"One": "one",
+						"Range": "range"
 					}
 				},
 
-				"ID":
-				{
-					"type":"Integer",
-					"dependency": 
-					{
-						"source":"target",
-						"value":"one",
-						"check":"equals",
-						"action":"show"
+				"ID": {
+					"type": "Integer",
+					"dependency": {
+						"source": "target",
+						"value": "one",
+						"check": "equals",
+						"action": "show"
 					}
 				},
 
-				"Start ID":
-				{
-					"type":"Integer",
-					"dependency": 
-					{
-						"source":"target",
-						"value":"range",
-						"check":"equals",
-						"action":"show"
+				"Start ID": {
+					"type": "Integer",
+					"dependency": {
+						"source": "target",
+						"value": "range",
+						"check": "equals",
+						"action": "show"
 					}
 				},
-				
-				"End ID":
-				{
-					"type":"Integer",
-					"default":1,
-					"dependency": 
-					{
-						"source":"target",
-						"value":"range",
-						"check":"equals",
-						"action":"show"
+
+				"End ID": {
+					"type": "Integer",
+					"default": 1,
+					"dependency": {
+						"source": "target",
+						"value": "range",
+						"check": "equals",
+						"action": "show"
 					}
 				}
 			}
 		},
 
-		"Gradient":
-		{
-			"menu":"Advanced",
-			"callback":"gradientCallback",
-			"parameters":
-			{
-				"Start ID":
-				{
-					"type":"Integer",
-					"min":0,
-					"max":15
-				},
-				
-				"End ID":
-				{
-					"type":"Integer",
-					"default":1,
-					"min":0,
-					"max":15
+		"Gradient": {
+			"menu": "Advanced",
+			"callback": "gradientCallback",
+			"parameters": {
+				"Start ID": {
+					"type": "Integer",
+					"min": 0,
+					"max": 15
 				},
 
-				"Start Color":
-				{
-					"type":"Color",
-					"default":[1,0,0,1]
+				"End ID": {
+					"type": "Integer",
+					"default": 1,
+					"min": 0,
+					"max": 15
 				},
 
-				"End Color":
-				{
-					"type":"Color",
-					"default":[0,0,1,1]
+				"Start Color": {
+					"type": "Color",
+					"default": [1,0,0,1]
+				},
+
+				"End Color": {
+					"type": "Color",
+					"default": [0,0,1,1]
 				}
-				
 			}
 		},
 
-		"Point":
-		{
-			"menu":"Advanced",
-			"callback":"pointCallback",
-			"parameters":
-			{
-				"Start ID":
-				{
-					"type":"Integer",
-					"min":0,
-					"max":15
-				},
-				
-				"End ID":
-				{
-					"type":"Integer",
-					"default":1,
-					"min":0,
-					"max":15
+		"Point": {
+			"menu": "Advanced",
+			"callback": "pointCallback",
+			"parameters": {
+				"Start ID": {
+					"type": "Integer",
+					"min": 0,
+					"max": 15
 				},
 
-				"Position":
-				{
-					"type":"Float",
-					"default":0.5,
-					"min":0,
-					"max":1,
+				"End ID": {
+					"type": "Integer",
+					"default": 1,
+					"min": 0,
+					"max": 15
 				},
 
-				"Size":
-				{
-					"type":"Float",
-					"default":0.1,
-					"min":0,
-					"max":1
+				"Position": {
+					"type": "Float",
+					"default": 0.5,
+					"min": 0,
+					"max": 1
 				},
 
-				"Fade":
-				{
-					"type":"Float",
-					"default":0.5,
-					"min":0,
-					"max":1
+				"Size": {
+					"type": "Float",
+					"default": 0.1,
+					"min": 0,
+					"max": 1
 				},
 
-				"Color":
-				{
-					"type":"Color",
-					"default":[1,1,1,1]
+				"Fade": {
+					"type": "Float",
+					"default": 0.5,
+					"min": 0,
+					"max": 1
+				},
+
+				"Color": {
+					"type": "Color",
+					"default": [1,1,1,1]
 				}
 			}
 		}
