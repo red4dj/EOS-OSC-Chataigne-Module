@@ -205,12 +205,31 @@ function pointCallback(startID, endID, position, size, fade, value) {
  * @param args {string} OSC arguments
  */
 function oscEvent(address, args) {
+	// Register pattern for cmdLine
+	local.register("/eos/out/cmd", "cmdLineCallback");
+
 	// Register pattern with Wildcards for cuelist and cue number
 	local.register("/eos/out/*/cue/*/*", "cueCallback");
 	local.register("/eos/out/pending/cue", "cueCallback");
 
 	// Register pattern with Wildcards for cueText
 	local.register("/eos/out/*/cue/text", "cueTextCallback");
+}
+
+/**
+ * Parse Eos command line output and set module values
+ *
+ * @param address {string} OSC address
+ * @param args {string} OSC arguments
+ */
+function cmdLineCallback(address, args) {
+	// Check if address pattern matches command line
+	if (local.match(address, "/eos/out/cmd")) {
+		local.values.commandLine.set(args[0]);
+
+		// DEBUG
+		script.log("Command Line: \"" + args[0] + "\"");
+	}
 }
 
 /**

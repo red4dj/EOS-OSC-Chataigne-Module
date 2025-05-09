@@ -67,6 +67,12 @@
 	},
 
 	"values": {
+		"CommandLine":{
+			"type": "String",
+			"readOnly": true,
+			"description": "Command line of current user"
+		},
+
 		"ActiveCueNo":{
 			"type": "Float",
 			"readOnly": true,
