@@ -2,6 +2,8 @@
  * Initializes EOS OSC module
  */
 function init() {
+	script.log("Initializing EOS OSC");
+
 	// Register pattern for cmdLine
 	local.register("/eos/out/cmd", "cmdLineCallback");
 
@@ -15,6 +17,8 @@ function init() {
 	// Send Initial OSC
 	updateUser();
 	local.send("/eos/subscribe", 1);
+
+	script.log("EOS OSC Ready!");
 }
 
 /**
@@ -49,8 +53,10 @@ function sendCommand(command, terminate, clear) {
 	}
 
 	if (clear) {
+		script.log("New Command: " + command);
 		local.send("/eos/newcmd", command);
 	} else {
+		script.log("Command: " + command);
 		local.send("/eos/cmd", command);
 	}
 }
@@ -69,7 +75,7 @@ function updateUser() {
 
 	local.send("/eos/user", userID);
 
-	script.log("Change Eos user: " + userID);
+	script.log("Change Eos User: " + userID);
 }
 
 /**
@@ -103,8 +109,11 @@ function valueCallback(target, id, startID, endID, value) {
 	var v = Math.round(value * 100);
 	v = normalizeEosSingleDigit(v);
 
-	var cmd = getCommandTarget(target, id, startID, endID)+" @ "+v;
-	sendCommand(cmd, true, true);
+	var targetCmd = getCommandTarget(target, id, startID, endID);
+
+	script.log("Value [" + v + "]: " + targetCmd);
+
+	sendCommand(targetCmd+" @ "+v, true, true);
 }
 
 /**
@@ -118,6 +127,9 @@ function valueCallback(target, id, startID, endID, value) {
  */
 function colorCallback(target, id, startID, endID, color) {
 	var targetCmd = getCommandTarget(target, id, startID, endID);
+
+	script.log("Color [" + color[0] + ", " + color[1] + ", " + color[2] + "]: " + targetCmd);
+
 	sendCommand(targetCmd, true, true);
 	local.send("/eos/color/rgb", color[0], color[1], color[2]);
 }
@@ -131,11 +143,12 @@ function colorCallback(target, id, startID, endID, color) {
  * @param endID {int} Target "range" end id
  */
 function blackOutCallback(target, id, startID, endID) {
-	var cmd = getCommandTarget(target, id, startID, endID)+" Color 0";
-	sendCommand(cmd, true, true);
+	var targetCmd = getCommandTarget(target, id, startID, endID);
 
-	cmd = getCommandTarget(target, id, startID, endID)+" @ Out";
-	sendCommand(cmd, true, true);
+	script.log("Blackout: " + targetCmd);
+
+	sendCommand(targetCmd+" Color 0", true, true);
+	sendCommand(targetCmd+" @ Out", true, true);
 }
 
 // Advanced Commands
@@ -148,6 +161,8 @@ function blackOutCallback(target, id, startID, endID) {
  * @param color2 {[red: number, green: number, blue: number]} Gradient end color array (values 0.0-1.0)
  */
 function gradientCallback(startID, endID, color1, color2) {
+	script.log("Gradient: Chan " + startID + " Thru " + endID);
+
 	if (startID == endID) {
 		colorCallback("one",startID,0,0,color1);
 		return;
@@ -185,6 +200,8 @@ function gradientCallback(startID, endID, color1, color2) {
  * @param value {number} Value 0.0-1.0
  */
 function pointCallback(startID, endID, position, size, fade, value) {
+	script.log("Point: Chan " + startID + " Thru " + endID);
+
 	for (var i = startID; i <= endID; i++) {
 		var p = parseFloat(i-startID) / (endID-startID); //Percent of all targets
 
@@ -212,7 +229,6 @@ function cmdLineCallback(address, args) {
 	if (local.match(address, "/eos/out/cmd")) {
 		local.values.commandLine.set(args[0]);
 
-		// DEBUG
 		script.log("Command Line: \"" + args[0] + "\"");
 	}
 }
@@ -248,13 +264,14 @@ function cueCallback(address, args) {
 		if (cueType == "active") {
 			local.values.activeCueNo.set(cueNumber);
 			local.values.activeCuelistNo.set(cuelist);
+
+			script.log("Active Cue - List: " + cuelist + ", Cue: " + cueNumber);
 		} else if (cueType == "pending") {
 			local.values.pendingCueNo.set(cueNumber);
 			local.values.pendingCuelistNo.set(cuelist);
-		}
 
-		// DEBUG
-		script.log(cueType + " cue: List " + cuelist + ", Cue " + cueNumber);
+			script.log("Pending Cue - List: " + cuelist + ", Cue: " + cueNumber);
+		}
 	}
 }
 
@@ -294,7 +311,7 @@ function cueTextCallback(address, args) {
 				cueLabel = cueText.join(" ");
 			}
 
-			script.log("Parse active cue - Label: " + cueLabel + ", Time: " + cueTime + ", Percent: " + cuePercent);
+			script.log("Parse Active Cue - Label: " + cueLabel + ", Time: " + cueTime + ", Percent: " + cuePercent);
 
 			// Output the active cue text
 			local.values.activeCueName.set(args[0]);
@@ -315,7 +332,7 @@ function cueTextCallback(address, args) {
 				cueLabel = cueText.join(" ");
 			}
 
-			script.log("Parse pending cue - Label: " + cueLabel + ", Time: " + cueTime);
+			script.log("Parse Pending Cue - Label: " + cueLabel + ", Time: " + cueTime);
 
 			// Output the pending cue text
 			local.values.pendingCueName.set(args[0]);
