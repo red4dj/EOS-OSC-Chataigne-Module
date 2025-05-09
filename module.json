@@ -76,7 +76,8 @@
 		"ActiveCueNo":{
 			"type": "Float",
 			"readOnly": true,
-			"description": "Active cue number"
+			"description": "Active cue number",
+			"stringDecimals": 0
 		},
 
 		"ActiveCuelistNo":{
@@ -88,7 +89,8 @@
 		"PendingCueNo":{
 			"type": "Float",
 			"readOnly": true,
-			"description": "Pending cue number"
+			"description": "Pending cue number",
+			"stringDecimals": 0
 		},
 
 		"PendingCuelistNo":{
@@ -113,7 +115,8 @@
 			"type": "Float",
 			"readOnly": true,
 			"ui": "time",
-			"description": "Active cue time"
+			"description": "Active cue time",
+			"stringDecimals": 0
 		},
 
 		"ActiveCuePercent":{
@@ -138,7 +141,8 @@
 			"type": "Float",
 			"readOnly": true,
 			"ui": "time",
-			"description": "Pending cue time"
+			"description": "Pending cue time",
+			"stringDecimals": 0
 		}
 	},
 
@@ -196,7 +200,8 @@
 					"default": 1.0,
 					"min": 0.001,
 					"max": 9999.999,
-					"ui": "label"
+					"ui": "label",
+					"stringDecimals": 0
 				},
 
 				"Part": {
