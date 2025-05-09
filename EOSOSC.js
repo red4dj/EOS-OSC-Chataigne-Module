@@ -78,24 +78,6 @@ function getCommandTarget(target, id, startID, endID) {
 	if (target == "all") return "Select_All";
 }
 
-/**
- * Create an Eos message to set channel color from color input
- *
- * @param color {[red: number, green: number, blue: number]} Color array (values 0.0-1.0)
- *
- * @returns {string} Eos color command
- */
-function getColorMessage(color) {
-	var r = Math.round(color[0] * 100);
-	var g = Math.round(color[1] * 100);
-	var b = Math.round(color[2] * 100);
-	r = normalizeEosSingleDigit(r);
-	g = normalizeEosSingleDigit(g);
-	b = normalizeEosSingleDigit(b);
-
-	return "Red "+r+" Green "+g+" Blue "+b;
-}
-
 // Commands
 /**
  * Send command to set target to value
@@ -124,9 +106,9 @@ function valueCallback(target, id, startID, endID, value) {
  * @param color {[red: number, green: number, blue: number]} Color array (values 0.0-1.0)
  */
 function colorCallback(target, id, startID, endID, color) {
-	var cmd = getCommandTarget(target, id, startID, endID);
-	var colCmd  = getColorMessage(color);
-	sendCommand(cmd+" "+colCmd, true, true);
+	var targetCmd = getCommandTarget(target, id, startID, endID);
+	sendCommand(targetCmd, true, true);
+	local.send("/eos/color/rgb", color[0], color[1], color[2]);
 }
 
 /**
