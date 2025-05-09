@@ -97,11 +97,37 @@ function getCommandTarget(target, id, startID, endID) {
 
 // Universal Commands
 /**
+ * Send command to fire cue
+ *
+ * @param {int} type The type of cue to fire (1: Cue, 2: Cuelist & Cue, 3: Cuelist & Cue & Part)
+ * @param {int} cuelist The cuelist of cue to fire
+ * @param {number} cue The cue to fire
+ * @param {int} part The part of cue to fire
+ */
+function fireCueCallback(type, cuelist, cue, part) {
+	script.log(type);
+
+	if (type == 1) {
+		// Fire Cue
+		script.log("Cue: " + cue);
+		local.send("/eos/cue/" + cue + "/fire");
+	} else if (type == 2) {
+		// Fire Cuelist & Cue
+		script.log("Cue: " + cuelist + "/" + cue);
+		local.send("/eos/cue/" + cuelist + "/" + cue + "/fire");
+	} else if (type == 3) {
+		// Fire Cuelist & Cue & Part
+		script.log("Cue: " + cuelist + "/" + cue + " P" + part);
+		local.send("/eos/cue/" + cuelist + "/" + cue + "/" + part + "/fire");
+	}
+}
+
+/**
  * Send command to fire macro
  *
  * @param {int} macroNumber The number of the macro to fire (1-99,999)
  */
-function macroCallback(macroNumber) {
+function fireMacroCallback(macroNumber) {
 	script.log("Macro: " + macroNumber);
 
 	local.send("/eos/macro/fire", macroNumber);

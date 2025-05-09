@@ -165,9 +165,57 @@
 			}
 		},
 
+		"Fire Cue": {
+			"menu": "",
+			"callback": "fireCueCallback",
+			"parameters": {
+				"Type": {
+					"type": "Enum",
+					"options": {
+						"Cue": 1,
+						"Cuelist & Cue": 2,
+						"Cuelist & Cue & Part": 3
+					}
+				},
+
+				"Cuelist": {
+					"type": "Integer",
+					"default": 1,
+					"min": 1,
+					"max": 999,
+					"dependency": {
+						"source": "type",
+						"value": 1,
+						"check": "greaterThan",
+						"action": "show"
+					}
+				},
+
+				"Cue": {
+					"type": "Float",
+					"default": 1.0,
+					"min": 0.001,
+					"max": 9999.999
+				},
+
+				"Part": {
+					"type": "Integer",
+					"default": 1,
+					"min": 1,
+					"max": 20,
+					"dependency": {
+						"source": "type",
+						"value": 2,
+						"check": "greaterThan",
+						"action": "show"
+					}
+				}
+			}
+		},
+
 		"Fire Macro": {
 			"menu": "",
-			"callback": "macroCallback",
+			"callback": "fireMacroCallback",
 			"parameters": {
 				"Macro Number": {
 					"type": "Integer",
