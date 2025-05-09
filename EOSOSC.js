@@ -29,9 +29,19 @@ function moduleParameterChanged(param) {
  * Sends and terminates a command to Eos
  *
  * @param {string} command The command to send
+ * @param {boolean} [terminate=false] Whether to terminate the command line after new command
+ * @param {boolean} [clear=false] Whether to clear command line before new command
  */
-function sendCommand(command) {
-	local.send("/eos/cmd", command+"#");
+function sendCommand(command, terminate, clear) {
+	if (terminate) { //Terminate if true or no terminate variable provided
+		command = command+"#";
+	}
+
+	if (clear) {
+		local.send("/eos/newcmd", command);
+	} else {
+		local.send("/eos/cmd", command);
+	}
 }
 
 /**
@@ -101,7 +111,7 @@ function valueCallback(target, id, startID, endID, value) {
 	v = normalizeEosSingleDigit(v);
 
 	var cmd = getCommandTarget(target, id, startID, endID)+" @ "+v;
-	sendCommand(cmd);
+	sendCommand(cmd, true, true);
 }
 
 /**
@@ -116,7 +126,7 @@ function valueCallback(target, id, startID, endID, value) {
 function colorCallback(target, id, startID, endID, color) {
 	var cmd = getCommandTarget(target, id, startID, endID);
 	var colCmd  = getColorMessage(color);
-	sendCommand(cmd+" "+colCmd);
+	sendCommand(cmd+" "+colCmd, true, true);
 }
 
 /**
@@ -129,10 +139,10 @@ function colorCallback(target, id, startID, endID, color) {
  */
 function blackOutCallback(target, id, startID, endID) {
 	var cmd = getCommandTarget(target, id, startID, endID);
-	sendCommand(cmd+" Color 0");
+	sendCommand(cmd+" Color 0", true, true);
 
 	cmd = getCommandTarget(target, id, startID, endID)+" @ Out";
-	sendCommand(cmd);
+	sendCommand(cmd, true, true);
 }
 
 // Advanced Commands

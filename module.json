@@ -143,6 +143,28 @@
 	},
 
 	"commands": {
+		"Send Command": {
+			"menu": "",
+			"callback": "sendCommand",
+			"parameters": {
+				"Command": {
+					"type": "String"
+				},
+
+				"Terminate": {
+					"type": "Boolean",
+					"default": true,
+					"description": "Whether to terminate the command line after new command"
+				},
+
+				"Clear": {
+					"type": "Boolean",
+					"default": true,
+					"description": "Whether to clear command line before new command"
+				}
+			}
+		},
+
 		"Set Value": {
 			"menu": "",
 			"callback": "valueCallback",
