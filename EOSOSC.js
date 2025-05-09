@@ -2,6 +2,17 @@
  * Initializes EOS OSC module
  */
 function init() {
+	// Register pattern for cmdLine
+	local.register("/eos/out/cmd", "cmdLineCallback");
+
+	// Register pattern with Wildcards for cuelist and cue number
+	local.register("/eos/out/*/cue/*/*", "cueCallback");
+	local.register("/eos/out/pending/cue", "cueCallback");
+
+	// Register pattern with Wildcards for cueText
+	local.register("/eos/out/*/cue/text", "cueTextCallback");
+
+	// Send Initial OSC
 	updateUser();
 	local.send("/eos/subscribe", 1);
 }
@@ -120,8 +131,8 @@ function colorCallback(target, id, startID, endID, color) {
  * @param endID {int} Target "range" end id
  */
 function blackOutCallback(target, id, startID, endID) {
-	var cmd = getCommandTarget(target, id, startID, endID);
-	sendCommand(cmd+" Color 0", true, true);
+	var cmd = getCommandTarget(target, id, startID, endID)+" Color 0";
+	sendCommand(cmd, true, true);
 
 	cmd = getCommandTarget(target, id, startID, endID)+" @ Out";
 	sendCommand(cmd, true, true);
@@ -189,25 +200,7 @@ function pointCallback(startID, endID, position, size, fade, value) {
 	}
 }
 
-// Functions to read cuelist and cue number
-/**
- * Register OSC patterns for callback recognition
- *
- * @param address {string} OSC address
- * @param args {string} OSC arguments
- */
-function oscEvent(address, args) {
-	// Register pattern for cmdLine
-	local.register("/eos/out/cmd", "cmdLineCallback");
-
-	// Register pattern with Wildcards for cuelist and cue number
-	local.register("/eos/out/*/cue/*/*", "cueCallback");
-	local.register("/eos/out/pending/cue", "cueCallback");
-
-	// Register pattern with Wildcards for cueText
-	local.register("/eos/out/*/cue/text", "cueTextCallback");
-}
-
+// OSC Receive Callbacks
 /**
  * Parse Eos command line output and set module values
  *
