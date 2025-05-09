@@ -95,7 +95,19 @@ function getCommandTarget(target, id, startID, endID) {
 	if (target == "all") return "Select_All";
 }
 
-// Commands
+// Universal Commands
+/**
+ * Send command to fire macro
+ *
+ * @param {int} macroNumber The number of the macro to fire (1-99,999)
+ */
+function macroCallback(macroNumber) {
+	script.log("Macro: " + macroNumber);
+
+	local.send("/eos/macro/fire", macroNumber);
+}
+
+// Channel Control Commands
 /**
  * Send command to set target to value
  *

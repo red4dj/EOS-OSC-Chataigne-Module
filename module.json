@@ -165,8 +165,20 @@
 			}
 		},
 
-		"Set Value": {
+		"Fire Macro": {
 			"menu": "",
+			"callback": "macroCallback",
+			"parameters": {
+				"Macro Number": {
+					"type": "Integer",
+					"min": 1,
+					"max": 99999
+				}
+			}
+		},
+
+		"Set Value": {
+			"menu": "Channel Controls",
 			"callback": "valueCallback",
 			"parameters": {
 				"Target": {
@@ -221,7 +233,7 @@
 		},
 
 		"Set Color": {
-			"menu": "",
+			"menu": "Channel Controls",
 			"callback": "colorCallback",
 			"parameters": {
 				"Target": {
@@ -274,7 +286,7 @@
 		},
 
 		"Black Out": {
-			"menu": "",
+			"menu": "Channel Controls",
 			"callback": "blackOutCallback",
 			"parameters": {
 				"Target": {
