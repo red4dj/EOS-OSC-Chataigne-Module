@@ -190,9 +190,9 @@ function pointCallback(startID, endID, position, size, fade, value) {
 			fac = 1 - Math.abs(fac / size);
 			fac = Math.min(Math.max(fac,0),1);
 
-			valueCallback("one", i, undefined, undefined, value * fac)
+			valueCallback("one", i, undefined, undefined, value * fac);
 		} else {
-			valueCallback("one", i, undefined, undefined, 0)
+			valueCallback("one", i, undefined, undefined, 0);
 		}
 	}
 }
